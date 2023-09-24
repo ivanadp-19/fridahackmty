@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 from google.cloud import storage
+from speech import transcribe_mp3_audio
 from db_functions import *
 from google.cloud import documentai_v1beta3 as documentai
 from document_ai import get_content
@@ -52,6 +53,10 @@ def upload():
             # Handle image files with OCR and directly upload the TXT file
             txt_blob_name = process_image_with_ocr(file, file_name, subject_name)
             return f'File uploaded successfully to Google Cloud Storage as {txt_blob_name}'
+        elif file_extension in ['.mp3']:
+            # Handle MP3 files by transcribing the audio
+            txt_blob_name = process_audio_with_speech(file, file_name, subject_name)
+            return f'File uploaded successfully to Google Cloud Storage as {txt_blob_name}'
         else:
             return 'Unsupported file type'
 
@@ -92,6 +97,26 @@ def process_image_with_ocr(file, file_name, subject_name):
     insert_file_record(subject_id, txt_blob_name)
 
     return txt_blob_name
+
+def process_audio_with_speech(file, file_name, subject_name):
+
+    # Extract the text content from the OCR result
+
+    extracted_text = transcribe_mp3_audio(file.read())
+
+    # Create a new TXT blob with the extracted text
+    txt_blob_name = os.path.splitext(file_name)[0] + '.txt'
+    txt_blob = bucket.blob(txt_blob_name)
+    txt_blob.upload_from_string(extracted_text)
+
+    # Get the subject_id based on subject_name
+    subject_id = get_subject_id(subject_name)
+
+    # Insert a new row into the file table for the TXT file
+    insert_file_record(subject_id, txt_blob_name)
+
+    return txt_blob_name
+
 
 @app.route('/delete_file', methods=['POST'])
 def delete_file():
