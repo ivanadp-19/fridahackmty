@@ -1,5 +1,6 @@
 # app.py
 import os
+import json
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 from google.cloud import storage
@@ -9,7 +10,7 @@ from google.cloud import documentai_v1beta3 as documentai
 from document_ai import get_content
 from flask_cors import CORS
 from flask import Flask, jsonify
-from quiz_gen import embedding_db, retrieve_answer
+from quiz_gen import quiz, summary, syllabus, word_count
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -210,7 +211,7 @@ def get_subject(subject_name):
         return 'Subject not found', 404
 
 @app.route('/get_quiz/<subject_name>', methods=['GET'])
-def retrieve_answer_by_subject(subject_name):
+def retrieve_quiz(subject_name):
     # Get information by subject name
     names = get_info_by_subject_name(subject_name)
     print(names)
@@ -218,12 +219,49 @@ def retrieve_answer_by_subject(subject_name):
     urls = get_urls(names)
 
     print(urls)
+    response = quiz(urls)
 
-    # Create an embedding database using the URLs
-    doc_db = embedding_db(urls)
+    # Return the response as JSON
+    return jsonify(json.loads(response))
 
-    # Retrieve an answer using the embedding database
-    response = retrieve_answer(doc_db)
+@app.route('/get_summary/<subject_name>', methods=['GET'])
+def retrieve_summary(subject_name):
+    # Get information by subject name
+    names = get_info_by_subject_name(subject_name)
+    print(names)
+    # Get URLs based on the retrieved names
+    urls = get_urls(names)
+
+    print(urls)
+    response = summary(urls)
 
     # Return the response as JSON
     return jsonify(response)
+
+@app.route('/get_syllabus/<subject_name>', methods=['GET'])
+def retrieve_syllabus(subject_name):
+    # Get information by subject name
+    names = get_info_by_subject_name(subject_name)
+    print(names)
+    # Get URLs based on the retrieved names
+    urls = get_urls(names)
+
+    print(urls)
+    response = syllabus(urls)
+
+    # Return the response as JSON
+    return jsonify(response)
+
+@app.route('/get_word_count/<subject_name>', methods=['GET'])
+def retrieve_word_count(subject_name):
+    # Get information by subject name
+    names = get_info_by_subject_name(subject_name)
+    print(names)
+    # Get URLs based on the retrieved names
+    urls = get_urls(names)
+
+    print(urls)
+    response = word_count(urls)
+
+    # Return the response as JSON
+    return jsonify(json.loads(response))
