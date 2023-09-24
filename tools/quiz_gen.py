@@ -111,7 +111,23 @@ Generate a summary of the document(s)."""
 
 syllabus_template = """
 Generate a syllabus of the document(s). Topics with more weight should be
-more prominent in the syllabus, and should be more expanded upon."""
+more prominent in the syllabus, and should be more expanded upon.
+
+Use the following format:
+'I. Topic 1
+  A. Subtopic 1
+    1. Sub-subtopic 1
+    2. Sub-subtopic 2
+    etc.' 
+Do not return text other than the syllabus."""
+
+word_count_template = """
+Return the 10 most frequent words in the document(s). In the following format:
+
+word: count,
+word: count, etc.
+
+Do not return text other than the word counts."""
 
 
 def retrieve_answer(doc_db, query):
@@ -139,6 +155,11 @@ def syllabus(urls):
   syllabus = retrieve_answer(doc_db, syllabus_template)
   return syllabus
 
+def word_count(urls):
+  doc_db = embedding_db(urls)
+  word_count = retrieve_answer(doc_db, word_count_template)
+  return word_count
+
 if __name__ == "__main__":
   urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
-  print(syllabus(urls))
+  print(word_count(urls))
