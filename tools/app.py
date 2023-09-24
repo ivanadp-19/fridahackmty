@@ -6,17 +6,20 @@ from google.cloud import storage
 from db_functions import *
 from google.cloud import documentai_v1beta3 as documentai
 from document_ai import get_content
-
+from flask_cors import CORS
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'txt', 'pdf'}  # Add allowed file extensions
+CORS(app)
 
 # Configure Google Cloud Storage
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'credentials.json'
 storage_client = storage.Client()
 bucket_name = os.environ.get('BUCKET_NAME')
 bucket = storage_client.bucket(bucket_name)
+
 
 @app.route('/')
 def index():
@@ -121,26 +124,62 @@ def delete_file_from_storage(file_name):
         print("Google Cloud Storage error:", e)
         return False
 
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/add_subject', methods=['POST'])
 def add_subject():
     subject_name = request.form.get('subject_name')
+    subject_thumbnail = request.files.get('thumbnail')
 
     if not subject_name:
         return 'No subject name provided'
+
+    if not subject_thumbnail:
+        return 'No subject thumbnail provided'
 
     # Check if the subject already exists in the database
     if subject_exists(subject_name):
         return 'Subject already exists in the database'
 
-    # If the subject doesn't exist, add it to the database
-    if insert_subject(subject_name):
+    # Check if a document with the same name already exists
+    thumbnail_filename = secure_filename(subject_thumbnail.filename)
+
+    if not allowed_file(thumbnail_filename):
+        return 'Invalid file format. Only PNG, JPEG, and JPG allowed.'
+
+    thumbnail_filename = thumbnail_filename.replace(' ', '_')
+
+    if document_exists(thumbnail_filename):
+        return 'Thumbnail with the same name already exists'
+
+    # Upload the thumbnail to Google Cloud Storage
+    thumbnail_blob = bucket.blob(thumbnail_filename)
+    thumbnail_blob.upload_from_file(subject_thumbnail)
+
+    # Insert the subject into the database with the thumbnail URL
+    if insert_subject(subject_name, thumbnail_filename):
         return 'Subject added to the database'
     else:
         return 'Failed to add the subject to the database'
 
 
-# for my flask app, create two routes
-# 1 /login
-# receives two parameters, user and password
-# looks in a local sqlite3 database called files.db 
-# checks in a table called users if 
+# Route to get subject names
+@app.route('/get_subjects', methods=['GET'])
+def get_subjects():
+    subject_names = get_subject_names()
+    return jsonify(subject_names)
+
+
+@app.route('/get_subject/<subject_name>')
+def get_subject(subject_name):
+    subject_info = get_info_by_subject_name(subject_name)
+
+    if subject_info is not None:
+        return jsonify(subject_info)
+    else:
+        return 'Subject not found', 404
+    

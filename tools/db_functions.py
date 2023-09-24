@@ -123,13 +123,13 @@ def subject_exists(subject_name):
         if conn:
             conn.close()
 
-def insert_subject(subject_name):
+def insert_subject(subject_name, thumbnail):
     try:
         conn = sqlite3.connect('info.db')
         cursor = conn.cursor()
 
         # Insert the subject_name into the subject table
-        cursor.execute('INSERT INTO subject (name) VALUES (?)', (subject_name,))
+        cursor.execute('INSERT INTO subject (name, thumbnail) VALUES (?, ?)', (subject_name, thumbnail))
         conn.commit()
 
         return True
@@ -140,4 +140,36 @@ def insert_subject(subject_name):
 
     finally:
         if conn:
+            conn.close()
+
+def get_subject_names():
+    try:
+        # Connect to the SQLite database
+        conn = sqlite3.connect('info.db')
+        cursor = conn.cursor()
+
+        # Execute a SQL query to retrieve all subject names and thumbnails
+        cursor.execute('SELECT name, thumbnail FROM subject')
+
+        # Fetch all subject names and thumbnails as a list of tuples
+        subject_data = cursor.fetchall()
+
+        # Process the data to add the BUCKET_URL prefix to thumbnails
+        processed_data = []
+        for name, thumbnail in subject_data:
+            if thumbnail is not None:
+                thumbnail = BUCKET_URL + thumbnail
+            processed_data.append((name, thumbnail))
+
+        return processed_data
+
+    except sqlite3.Error as e:
+        print("SQLite error:", e)
+        return []
+
+    finally:
+        # Close the database connection
+        if conn:
+            conn.close()
+
             conn.close()
