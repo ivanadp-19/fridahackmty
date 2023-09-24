@@ -49,7 +49,7 @@ export default function DropzoneButton(props:any) {
         onDrop={handleDrop}
         className={classes.dropzone}
         radius="md"
-        accept={[MIME_TYPES.pdf]}
+    
         maxSize={30 * 1024 ** 2}
         loading ={loading}
       >

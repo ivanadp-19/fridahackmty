@@ -3,10 +3,15 @@ import { useMantineTheme } from '@mantine/core';
 import { useState } from 'react';
 import classes from './MainMenu.module.css';
 
-export default function Stats() {
+export default function Stats(params:any) {
+    console.log(params.WordCount)
     return(
         <div>
-            <h1>Stats</h1>
+            <h1>Contador de palabras</h1>
+            {params.WordCount.map((wordle:any) => (
+                <p>{wordle.word}: {wordle.count}</p>
+            ))}
+
         </div>
     )
 }

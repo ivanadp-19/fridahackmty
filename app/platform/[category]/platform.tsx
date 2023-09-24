@@ -6,7 +6,7 @@ import MainMenu from './MainMenu';
 
 
 
-export default function Platform({ params }:{params:{category:string, Files:string, Exams:any}}) {
+export default function Platform({ params }:{params:{category:string, Files:string, Exams:any, Summary:any, WordCount:any}}) {
   const [opened, { toggle }] = useDisclosure();
   console.log(params.Exams);
 
@@ -31,7 +31,7 @@ export default function Platform({ params }:{params:{category:string, Files:stri
       //change color to grey
 
       <AppShell.Main >
-        <MainMenu category = {params.category} Exams={ params.Exams}></MainMenu>
+        <MainMenu category = {params.category} Exams={ params.Exams} Summary ={params.Summary} WordCount ={params.WordCount}></MainMenu>
       </AppShell.Main>
     </AppShell>
   );

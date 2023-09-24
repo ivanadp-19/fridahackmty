@@ -36,15 +36,56 @@ async function getExam(categoria:string) {
  
   return res.json()
 }
+async function getSummary(categoria:string) {
+  const res = await fetch(`http://3.18.163.82:5000/get_summary/${categoria}`)
+
+  //Put Loading
+  console.log('Loading')
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+ 
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+  else{
+    console.log(res)
+  }
+
+ 
+  return res.json()
+}
+async function getWordCount(categoria:string) {
+  const res = await fetch(`http://3.18.163.82:5000/get_word_count/${categoria}`)
+
+  //Put Loading
+  console.log('Loading')
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+ 
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+  else{
+    console.log(res)
+  }
+
+ 
+  return res.json()
+}
 
 export default async function PlatformPage({ params }:{params:{category:string}}) {
   const files = await getFiles(params.category)
   const exams = await getExam(params.category)
+  const summary = await getSummary(params.category)
+  const wordCount = await getWordCount(params.category)
+  console.log(summary)
   console.log(exams)
 
   return (
     
-        <Platform params={{category: params.category, Files:files, Exams:exams}}  ></Platform>
+        <Platform params={{category: params.category, Files:files, Exams:exams, Summary: summary, WordCount: wordCount}}  ></Platform>
 
   );
 }

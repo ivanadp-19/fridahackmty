@@ -87,7 +87,7 @@ console.log("ESA")
         {question.options.map((option, optionIndex) => (
           <Button
             key={optionIndex}
-            size="md"
+            size="lg"
             onClick={() => handleOptionClick(optionIndex)}
             //make the button gradient if it is the right answer
             variant={selectedAnswer === question.rightChoice ? 'gradient' : 'outline'}
