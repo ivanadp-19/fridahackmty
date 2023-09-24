@@ -107,7 +107,8 @@ answer in the options array.
 """
 
 summary_template = """
-Generate a summary of the document(s)."""
+Generate a summary of the document(s). 
+Return the text ONLY and COMPLETELY in spanish."""
 
 syllabus_template = """
 Generate a syllabus of the document(s). Topics with more weight should be
@@ -119,7 +120,9 @@ Use the following format:
     1. Sub-subtopic 1
     2. Sub-subtopic 2
     etc.' 
-Do not return text other than the syllabus."""
+Do not return text other than the syllabus.
+
+Return the text ONLY and COMPLETELY in spanish."""
 
 word_count_template = """
 Return the 10 most frequent words in the document(s).
@@ -176,4 +179,4 @@ def word_count(urls):
 
 if __name__ == "__main__":
   urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
-  print(word_count(urls))
+  print(summary(urls))
