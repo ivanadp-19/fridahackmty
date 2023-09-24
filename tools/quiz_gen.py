@@ -122,10 +122,18 @@ Use the following format:
 Do not return text other than the syllabus."""
 
 word_count_template = """
-Return the 10 most frequent words in the document(s). In the following format:
+Return the 10 most frequent words in the document(s). Return it in JSON format like so:
+[
+  {
+    "word": "word",
+    "count": 10
+  },
+  {
+    "word": "word",
+    "count": 10
+  },
+]
 
-word: count,
-word: count, etc.
 
 Do not return text other than the word counts."""
 
