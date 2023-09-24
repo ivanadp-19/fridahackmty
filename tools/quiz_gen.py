@@ -109,6 +109,10 @@ answer in the options array.
 summary_template = """
 Generate a summary of the document(s)."""
 
+syllabus_template = """
+Generate a syllabus of the document(s). Topics with more weight should be
+more prominent in the syllabus, and should be more expanded upon."""
+
 
 def retrieve_answer(doc_db, query):
   qa = RetrievalQA.from_chain_type(
@@ -130,6 +134,11 @@ def summary(urls):
   summary = retrieve_answer(doc_db, summary_template)
   return summary
 
+def syllabus(urls):
+  doc_db = embedding_db(urls)
+  syllabus = retrieve_answer(doc_db, syllabus_template)
+  return syllabus
+
 if __name__ == "__main__":
   urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
-  print(summary(urls))
+  print(syllabus(urls))
