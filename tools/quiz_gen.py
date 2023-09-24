@@ -134,6 +134,7 @@ Return the 10 most frequent words in the document(s). Return it in JSON format l
   },
 ]
 
+Only return relevant concepts to the topic, avoiding words like 'the', 'a', 'an', etc. in whatever language the document is in.
 
 Do not return text other than the word counts."""
 
