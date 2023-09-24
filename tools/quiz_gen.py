@@ -1,7 +1,9 @@
 import os
 import pinecone
+import requests
 from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
+from langchain.document_loaders import TextLoader 
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import CharacterTextSplitter
@@ -35,7 +37,26 @@ def doc_preprocessing(pdf_url):
   
   return docs_split
 
-def embedding_db(pdf_urls):
+
+def txt_doc_preprocessing(txt_url):
+  filename = txt_url.split("/")[-1]
+  save_folder = "../docs"
+  save_path = os.path.join(save_folder, filename)
+  response = requests.get(txt_url)
+  if response.status_code == 200:
+    with open(save_path, "wb") as file:
+        file.write(response.content)
+  else:
+      print(f"Failed to download file from URL: {txt_url}")
+  txt_loader = TextLoader(save_path)
+  docs = txt_loader.load()
+
+  text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
+  docs_split = text_splitter.split_documents(docs)
+  
+  return docs_split
+
+def embedding_db(urls):
   embeddings = OpenAIEmbeddings()
   pinecone.init(
     api_key=PINECONE_API_KEY,  # find at app.pinecone.io
@@ -44,8 +65,11 @@ def embedding_db(pdf_urls):
   index = pinecone.Index(PINECONE_INDEX_NAME)
   index.delete(delete_all=True)
   
-  for pdf_url in pdf_urls:
-    docs_split = doc_preprocessing(pdf_url)
+  for url in urls:
+    if url.endswith('.pdf'):
+      docs_split = doc_preprocessing(url)
+    elif url.endswith('.txt'):
+      docs_split = txt_doc_preprocessing(url)
     doc_db = Pinecone.from_documents(
       docs_split, 
       embeddings, 
@@ -72,8 +96,8 @@ def retrieve_answer_with_sources(query, doc_db):
 
 
 template = """
-Based on the documents in your database, generate the necessary amount of
-multiple choice questions (ALWAYS at least 10) to test the user's knowledge on the subject.
+Generate the necessary amount of multiple choice questions (ALWAYS at least 10) 
+to test the user's knowledge on the subject.
 Your response will be in JSON format. The JSON will be an array of objects,
 containing three things: the question, the options, and the answer.
 The question will be a string, the options will be an array of strings,
@@ -93,5 +117,9 @@ def retrieve_answer(doc_db, query = template):
 
 def main(urls):
   doc_db = embedding_db(urls)
-  response = retrieve_answer(doc_db)
-  return response
+  response = retrieve_answer(doc_db, template)
+  print(response)
+
+if __name__ == "__main__":
+  urls = ["https://www.apache.org/licenses/LICENSE-2.0.txt"]
+  main(urls)

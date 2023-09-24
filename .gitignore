@@ -8,6 +8,13 @@
 # testing
 /coverage
 
+# documents
+docs/
+
+# python env
+tools/env
+.env
+
 # next.js
 /.next/
 /out/
