@@ -9,6 +9,7 @@ from google.cloud import documentai_v1beta3 as documentai
 from document_ai import get_content
 from flask_cors import CORS
 from flask import Flask, jsonify
+from quiz_gen import embedding_db, retrieve_answer
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -207,4 +208,22 @@ def get_subject(subject_name):
         return jsonify(subject_info)
     else:
         return 'Subject not found', 404
-    
+
+@app.route('/get_quiz/<subject_name>', methods=['GET'])
+def retrieve_answer_by_subject(subject_name):
+    # Get information by subject name
+    names = get_info_by_subject_name(subject_name)
+    print(names)
+    # Get URLs based on the retrieved names
+    urls = get_urls(names)
+
+    print(urls)
+
+    # Create an embedding database using the URLs
+    doc_db = embedding_db(urls)
+
+    # Retrieve an answer using the embedding database
+    response = retrieve_answer(doc_db)
+
+    # Return the response as JSON
+    return jsonify(response)

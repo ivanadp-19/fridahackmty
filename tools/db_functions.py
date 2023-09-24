@@ -16,7 +16,7 @@ def get_info_by_subject_name(subject_name):
         ''', (subject_name,))
 
         # Fetch all matching names and add the prefix
-        names = [BUCKET_URL + row[0] for row in cursor.fetchall()]
+        names = [row[0] for row in cursor.fetchall()]
 
         # You can process the rows as needed (e.g., return them or print them)
         return names
@@ -29,6 +29,9 @@ def get_info_by_subject_name(subject_name):
         # Close the database connection
         if conn:
             conn.close()
+
+def get_urls(names):
+    return [BUCKET_URL + row for row in names]
 
 def document_exists(filename):
     try:
