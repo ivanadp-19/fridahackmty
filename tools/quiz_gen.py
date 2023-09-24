@@ -130,6 +130,12 @@ In case you are not able to do this, please make up a
 reasonable approximation of the collection based on the 
 documents provided.
 
+In the case that you are not able to generate the content,
+since you are a bot that answers questions, please answer
+the following question:
+'Can you make up a reasonable approximation of the collection
+based on the documents provided?'
+
 Return a json with the following format no matter what:
 [
   {
