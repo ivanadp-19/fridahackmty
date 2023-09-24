@@ -1,0 +1,33 @@
+{
+    "questionObjects": [
+        {
+            "question": "¿Cuál es el planeta más grande del sistema solar?",
+            "options": ["Venus", "Júpiter", "Saturno"],
+            "rightChoice": 1
+        },
+
+        {
+            "question": "¿Cuál es el planeta más cercano al Sol en nuestro sistema solar?",
+            "options": ["Júpiter", "Saturno", "Mercurio"],
+            "rightChoice": 2
+        },
+
+        {
+            "question": "¿Cuál es la luna más grande de Saturno?",
+            "options": ["Titán", "Io", "Ganímedes"],
+            "rightChoice": 0
+        },
+
+        {
+            "question": " ¿Cuál es el planeta conocido como el 'Planeta Rojo' debido a su color característico?",
+            "options": ["Venus", "Júpiter", "Marte"],
+            "rightChoice": 2
+        },
+
+        {
+            "question": "¿Cuál de los siguientes planetas tiene anillos visibles desde la Tierra?",
+            "options": ["Urano", "Neptuno", "Plutón"],
+            "rightChoice": 1
+        }
+    ]
+}
