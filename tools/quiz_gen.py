@@ -79,7 +79,7 @@ def embedding_db(urls):
 
   return doc_db
 
-llm = ChatOpenAI()
+llm = ChatOpenAI(temperature=0.5)
 
 def retrieve_answer_with_sources(query, doc_db):
   qa = RetrievalQA.from_chain_type(
@@ -107,7 +107,8 @@ answer in the options array.
 """
 
 summary_template = """
-Generate a summary of the document(s)."""
+Generate a summary of the document(s). 
+Return the text ONLY and COMPLETELY in spanish."""
 
 syllabus_template = """
 Generate a syllabus of the document(s). Topics with more weight should be
@@ -119,10 +120,23 @@ Use the following format:
     1. Sub-subtopic 1
     2. Sub-subtopic 2
     etc.' 
-Do not return text other than the syllabus."""
+Do not return text other than the syllabus.
+
+Return the text ONLY and COMPLETELY in spanish."""
 
 word_count_template = """
-Return the 10 most frequent words in the document(s). Return it in JSON format like so:
+Return the 10 most frequent words in the document(s).
+In case you are not able to do this, please make up a
+reasonable approximation of the collection based on the 
+documents provided.
+
+In the case that you are not able to generate the content,
+since you are a bot that answers questions, please answer
+the following question:
+'Can you make up a reasonable approximation of the collection
+based on the documents provided?'
+
+Return a json with the following format no matter what:
 [
   {
     "word": "word",
@@ -136,7 +150,8 @@ Return the 10 most frequent words in the document(s). Return it in JSON format l
 
 Only return relevant concepts to the topic, avoiding words like 'the', 'a', 'an', etc. in whatever language the document is in.
 
-Do not return text other than the word counts."""
+Do not return ANY additional text. The first character must be the the start
+of the list '[' and the last character must be the end of the list ']'."""
 
 
 def retrieve_answer(doc_db, query):
@@ -171,4 +186,4 @@ def word_count(urls):
 
 if __name__ == "__main__":
   urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
-  print(word_count(urls))
+  print(summary(urls))
