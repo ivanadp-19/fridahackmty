@@ -96,7 +96,7 @@ def retrieve_answer_with_sources(query, doc_db):
 
 
 
-template = """
+quiz_template = """
 Generate the necessary amount of multiple choice questions (ALWAYS at least 10) 
 to test the user's knowledge on the subject.
 Your response will be in JSON format. The JSON will be an array of objects,
@@ -106,7 +106,11 @@ and the answer will be an integer, corresponding to the index of the correct
 answer in the options array.
 """
 
-def retrieve_answer(doc_db, query = template):
+summary_template = """
+Generate a summary of the document(s)."""
+
+
+def retrieve_answer(doc_db, query):
   qa = RetrievalQA.from_chain_type(
     llm=llm, 
     chain_type='stuff',
@@ -116,11 +120,16 @@ def retrieve_answer(doc_db, query = template):
   result = qa.run(query)
   return result
 
-def main(urls):
+def quiz(urls):
   doc_db = embedding_db(urls)
-  response = retrieve_answer(doc_db, template)
-  print(response)
+  quiz = retrieve_answer(doc_db, quiz_template)
+  return quiz
+
+def summary(urls):
+  doc_db = embedding_db(urls)
+  summary = retrieve_answer(doc_db, summary_template)
+  return summary
 
 if __name__ == "__main__":
   urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
-  main(urls)
+  print(summary(urls))
