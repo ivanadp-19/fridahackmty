@@ -79,7 +79,7 @@ def embedding_db(urls):
 
   return doc_db
 
-llm = ChatOpenAI()
+llm = ChatOpenAI(temperature=0.5)
 
 def retrieve_answer_with_sources(query, doc_db):
   qa = RetrievalQA.from_chain_type(
@@ -122,7 +122,12 @@ Use the following format:
 Do not return text other than the syllabus."""
 
 word_count_template = """
-Return the 10 most frequent words in the document(s). Return it in JSON format like so:
+Return the 10 most frequent words in the document(s).
+In case you are not able to do this, please make up a
+reasonable approximation of the collection based on the 
+documents provided.
+
+Return a json with the following format no matter what:
 [
   {
     "word": "word",
