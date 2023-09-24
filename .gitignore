@@ -8,6 +8,13 @@
 # testing
 /coverage
 
+# documents
+docs/
+
+# python env
+tools/env
+.env
+
 # next.js
 /.next/
 /out/
@@ -34,3 +41,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+tools/credentials.json
+tools/.env
+tools/.env.local
+tools/env/
+tools/__pycache__/
