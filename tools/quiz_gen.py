@@ -150,7 +150,8 @@ Return a json with the following format no matter what:
 
 Only return relevant concepts to the topic, avoiding words like 'the', 'a', 'an', etc. in whatever language the document is in.
 
-Do not return text other than the word counts."""
+Do not return ANY additional text. The first character must be the the start
+of the list '[' and the last character must be the end of the list ']'."""
 
 
 def retrieve_answer(doc_db, query):
