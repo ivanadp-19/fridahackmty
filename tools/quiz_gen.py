@@ -1,6 +1,6 @@
 import os
 import pinecone
-import requests
+from urllib.request import urlopen
 from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import TextLoader 
@@ -42,10 +42,11 @@ def txt_doc_preprocessing(txt_url):
   filename = txt_url.split("/")[-1]
   save_folder = "../docs"
   save_path = os.path.join(save_folder, filename)
-  response = requests.get(txt_url)
-  if response.status_code == 200:
+  url = urlopen(txt_url)
+  data = url.read()
+  if url.getcode() == 200:
     with open(save_path, "wb") as file:
-        file.write(response.content)
+        file.write(data)
   else:
       print(f"Failed to download file from URL: {txt_url}")
   txt_loader = TextLoader(save_path)
@@ -121,5 +122,5 @@ def main(urls):
   print(response)
 
 if __name__ == "__main__":
-  urls = ["https://www.apache.org/licenses/LICENSE-2.0.txt"]
+  urls = ["https://storage.googleapis.com/fridahackmty/Avance_1_de_situacion_problema_-1.pdf"]
   main(urls)
